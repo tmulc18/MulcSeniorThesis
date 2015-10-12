@@ -1,0 +1,12 @@
+setwd('/home/mulctv/Rose_Classes/MathThesis/Amazon/')
+library(igraph)
+dat<-read.csv('babyEdges.csv',header=TRUE)
+colnames(dat)<-NULL
+el=as.matrix(dat)
+el[,1]=as.character(el[,1])
+el[,2]=as.character(el[,2])
+g=graph.edgelist(el,directed=FALSE)
+g = simplify(g,remove.multiple=TRUE, remove.loops = FALSE)
+png('baby.png', width = 2000, height = 2000)
+plot(g,vertex.size=0,vertex.label=NA,edge.arrow.size=0)
+dev.off()

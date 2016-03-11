@@ -86,7 +86,6 @@ random_walk_cluster<-function(g,steps=3,num_C=1){
       }
     }
   }
-  print(S)
   #---------------------------------------------------------------------------
   #Algorithm 2----------------------------------------------------------------
   C = c(1:length(V(g))) #C is the set of communities
@@ -96,16 +95,6 @@ random_walk_cluster<-function(g,steps=3,num_C=1){
     max_i = as.integer(maxIndicies[1,][2])
     max_j = as.integer(maxIndicies[1,][1])
     print(c(max_i,max_j))
-    #max_value=max(S)
-    
-    #merged_row = apply(cbind(S[max_i,],rep(max_value,length(V(g)))),1,mean) #this is in the paper
-    ##merged_row = apply(cbind(S[max_i,],S[max_j,]),1,mean)
-    ##S[max_i,]=merged_row
-    ##S[,max_j]=t(t(merged_row))
-    
-    
-    #max_i = ceiling(which.max(S)/length(V(g)))
-    #max_j = which.max(S)-(max_i - 1)*length(V(g))
     #? merge commuinities i and j and replace with new community?
     #convention will be to take the smallest index and keep that as the community label
     
@@ -114,7 +103,7 @@ random_walk_cluster<-function(g,steps=3,num_C=1){
     S[max_j,max_i] = 0
     merged_vec = apply(rbind(S[max_i,],S[max_j,]),2,mean)
     S[max_i,]=merged_vec
-    S[,max_i]=t(t(merged_vec)) #newly added
+    S[,max_i]=t(t(merged_vec))
     S[max_j,]=0
     S[,max_j]=0
     print(S)
@@ -126,13 +115,9 @@ random_walk_cluster<-function(g,steps=3,num_C=1){
         C[q]=C[max_i]
       }
     }
-    print(C)
-    #C[max_j]=C[max_i]
     
     if( max(S) == 0 || length(unique(C)) <= num_C ){
       isDone = TRUE
-      print(S)
-      print(C)
     }
   }
   #-----------------------------------------------------------------------------
@@ -151,7 +136,7 @@ g=graph.disjoint.union(erdos.renyi.game(n,p,loops=FALSE,directed=FALSE),
 g<-add_edges(g,c(n+1,1))
 #plot(g)
 
-g=random_walk_cluster(g,steps=20)
+g=random_walk_cluster(g,steps=3,num_C=2)
 modularity(g,g$membership)
 plot(g,mark.groups=NULL,layout=layout.kamada.kawai,vertex.label.cex=.8,vertex.size=15,margin=c(-.1,-.4,-.1,-.4))
 #-----------------------------------------------------------------------
@@ -176,10 +161,10 @@ plot(g,mark.groups=NULL,layout=layout.kamada.kawai,vertex.label.cex=.8,vertex.si
 #dev.off()
 
 #Zachary test
-#g = graph.famous("Zachary")
-#g=random_walk_cluster(g,length(V(g)))
-#modularity(g,g$membership)
-#plot(g,mark.groups=NULL,layout=layout.kamada.kawai,vertex.label.cex=.8,vertex.size=15,margin=c(-.1,-.4,-.1,-.4))
+g = graph.famous("Zachary")
+g=random_walk_cluster(g,length(V(g)),num_C=2)
+modularity(g,g$membership)
+plot(g,mark.groups=NULL,layout=layout.kamada.kawai,vertex.label.cex=.8,vertex.size=15,margin=c(-.1,-.4,-.1,-.4))
 
 
 #----------Example of Random Walk function---------
